@@ -19,7 +19,10 @@ app.use('/api', apiRoutes);
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/ai_career_navigator')
   .then(() => {
     console.log('Connected to MongoDB');
-    app.listen(PORT, () => {
+    app.get("/", (req, res) => {
+  res.send("AI Career Navigator Backend Running");
+});
+app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
     });
   })
