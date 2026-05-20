@@ -4,3 +4,4 @@ pypdf2
 google-generativeai
 pydantic
 python-dotenv
+python-multipart
