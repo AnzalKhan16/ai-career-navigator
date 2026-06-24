@@ -1,16 +1,18 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import API from '../api/axios';
-import { Briefcase, Activity, Target } from 'lucide-react';
+import { Briefcase, Activity, Target, FileText, ArrowLeft } from 'lucide-react';
 import RoadmapGenerator from '../components/RoadmapGenerator';
 import RoadmapDisplay from '../components/RoadmapDisplay';
+import UploadScreen from '../components/UploadScreen';
 
 const Dashboard = () => {
   const { user } = useContext(AuthContext);
   const [activities, setActivities] = useState([]);
   const [roadmaps, setRoadmaps] = useState([]);
-  const [activeTab, setActiveTab] = useState('generator'); // 'generator' or 'history'
+  const [activeTab, setActiveTab] = useState('generator'); // 'generator', 'history', 'resume'
   const [selectedRoadmap, setSelectedRoadmap] = useState(null);
+  const [resumeAnalysis, setResumeAnalysis] = useState(null);
 
   useEffect(() => {
     fetchUserData();
@@ -40,7 +42,7 @@ const Dashboard = () => {
       {/* Tabs */}
       <div className="flex gap-4 mb-8">
         <button 
-          onClick={() => { setActiveTab('generator'); setSelectedRoadmap(null); }}
+          onClick={() => { setActiveTab('generator'); setSelectedRoadmap(null); setResumeAnalysis(null); }}
           className={`px-6 py-3 rounded-lg font-medium transition-all flex items-center gap-2 ${
             activeTab === 'generator' 
               ? 'bg-white/10 text-white shadow-lg border border-white/20' 
@@ -51,7 +53,18 @@ const Dashboard = () => {
           Generate New
         </button>
         <button 
-          onClick={() => { setActiveTab('history'); setSelectedRoadmap(null); }}
+          onClick={() => { setActiveTab('resume'); setSelectedRoadmap(null); setResumeAnalysis(null); }}
+          className={`px-6 py-3 rounded-lg font-medium transition-all flex items-center gap-2 ${
+            activeTab === 'resume' 
+              ? 'bg-white/10 text-white shadow-lg border border-white/20' 
+              : 'text-secondary hover:text-white hover:bg-white/5 border border-transparent'
+          }`}
+        >
+          <FileText className="w-5 h-5" />
+          Analyze Resume
+        </button>
+        <button 
+          onClick={() => { setActiveTab('history'); setSelectedRoadmap(null); setResumeAnalysis(null); }}
           className={`px-6 py-3 rounded-lg font-medium transition-all flex items-center gap-2 ${
             activeTab === 'history' 
               ? 'bg-white/10 text-white shadow-lg border border-white/20' 
@@ -73,6 +86,29 @@ const Dashboard = () => {
                  setActiveTab('history');
                }} />
             </div>
+          ) : activeTab === 'resume' ? (
+            resumeAnalysis ? (
+               <div className="glass-card p-8 rounded-2xl border border-white/10 animate-in fade-in slide-in-from-bottom-4">
+                 <button 
+                   onClick={() => setResumeAnalysis(null)}
+                   className="flex items-center gap-2 text-secondary hover:text-white mb-6 transition-colors"
+                 >
+                   <ArrowLeft className="w-4 h-4" />
+                   Analyze another resume
+                 </button>
+                 <h2 className="text-3xl font-bold mb-6">Analysis <span className="text-gradient">Results</span></h2>
+                 <div className="prose prose-invert max-w-none">
+                   <div className="whitespace-pre-wrap text-primary/90 leading-relaxed font-sans bg-white/5 p-6 rounded-xl border border-white/5">
+                     {resumeAnalysis}
+                   </div>
+                 </div>
+               </div>
+            ) : (
+              <UploadScreen onComplete={(analysis) => {
+                setResumeAnalysis(analysis);
+                fetchUserData();
+              }} />
+            )
           ) : (
             <div className="space-y-6">
               {selectedRoadmap ? (
