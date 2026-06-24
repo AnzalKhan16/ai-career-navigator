@@ -14,9 +14,11 @@ app.use(express.urlencoded({ extended: true }));
 // Routes
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
+const roadmapRoutes = require('./routes/roadmapRoutes');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/roadmaps', roadmapRoutes);
 
 // Base Route for Health Check
 app.get('/', (req, res) => {
