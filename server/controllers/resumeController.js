@@ -50,6 +50,17 @@ const analyzeResume = async (req, res) => {
       action: 'Analyzed Resume via AI',
     });
 
+    // Broadcast to Community Feed
+    const FeedEvent = require('../models/FeedEvent');
+    await FeedEvent.create({
+      user: req.user._id,
+      userName: req.user.name,
+      userRole: 'Tech Enthusiast', // Use a default since currentRole isn't passed here
+      eventType: 'resume_analyzed',
+      actionText: 'analyzed their resume for',
+      target: targetRole,
+    });
+
     res.json({ analysis: response.choices[0].message.content });
   } catch (error) {
     console.error('Resume Analysis Error:', error);

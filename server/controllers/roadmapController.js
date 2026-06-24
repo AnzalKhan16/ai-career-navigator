@@ -31,6 +31,17 @@ const createRoadmap = async (req, res) => {
       action: 'Generated Career Roadmap',
     });
 
+    // Broadcast to Community Feed
+    const FeedEvent = require('../models/FeedEvent');
+    await FeedEvent.create({
+      user: req.user._id,
+      userName: req.user.name,
+      userRole: currentRole, // their current role
+      eventType: 'roadmap_created',
+      actionText: 'generated a roadmap to become',
+      target: targetRole,
+    });
+
     res.status(201).json(roadmap);
   } catch (error) {
     console.error('Roadmap Generation Error:', error.message);
