@@ -2,9 +2,10 @@ import React, { useContext } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, AuthContext } from './context/AuthContext';
 import Navbar from './components/Navbar';
+import Login from './pages/Login';
+import Register from './pages/Register';
 
-// --- Placeholder Components for Phase 3 & 4 ---
-// We define these inline so your app doesn't crash before we create the actual files!
+// --- Placeholder Components for Phase 4 ---
 const Home = () => (
   <div className="flex flex-col items-center justify-center text-center mt-20">
     <h1 className="text-5xl font-bold mb-6">Welcome to AI Career <span className="text-gradient">Navigator</span></h1>
@@ -12,8 +13,6 @@ const Home = () => (
   </div>
 );
 
-const Login = () => <div className="text-center mt-20 text-2xl font-semibold">Login Page (Coming in Phase 3)</div>;
-const Register = () => <div className="text-center mt-20 text-2xl font-semibold">Register Page (Coming in Phase 3)</div>;
 const Dashboard = () => <div className="text-center mt-20 text-2xl font-semibold">Protected Dashboard (Coming in Phase 4)</div>;
 
 // --- Protected Route Wrapper ---
