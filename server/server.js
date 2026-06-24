@@ -17,12 +17,14 @@ const userRoutes = require('./routes/userRoutes');
 const roadmapRoutes = require('./routes/roadmapRoutes');
 const activityRoutes = require('./routes/activityRoutes');
 const resumeRoutes = require('./routes/resumeRoutes');
+const communityRoutes = require('./routes/communityRoutes');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/roadmaps', roadmapRoutes);
 app.use('/api/activities', activityRoutes);
 app.use('/api/resumes', resumeRoutes);
+app.use('/api/community', communityRoutes);
 
 // Base Route for Health Check
 app.get('/', (req, res) => {
