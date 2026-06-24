@@ -6,6 +6,7 @@ import RoadmapGenerator from '../components/RoadmapGenerator';
 import RoadmapDisplay from '../components/RoadmapDisplay';
 import UploadScreen from '../components/UploadScreen';
 import MetricsDashboard from '../components/MetricsDashboard';
+import CommunityFeed from '../components/CommunityFeed';
 
 const Dashboard = () => {
   const { user } = useContext(AuthContext);
@@ -167,6 +168,10 @@ const Dashboard = () => {
                 ))
               )}
             </div>
+          </div>
+          
+          <div className="mt-8">
+            <CommunityFeed />
           </div>
         </div>
       </div>
