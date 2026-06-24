@@ -23,6 +23,14 @@ const createRoadmap = async (req, res) => {
       roadmapContent,
     });
 
+    // Log the Activity
+    const Activity = require('../models/Activity');
+    await Activity.create({
+      user: req.user._id,
+      targetRole,
+      action: 'Generated Career Roadmap',
+    });
+
     res.status(201).json(roadmap);
   } catch (error) {
     console.error('Roadmap Generation Error:', error.message);
