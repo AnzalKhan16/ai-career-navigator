@@ -14,9 +14,20 @@ const analyzeResume = async (req, res) => {
       return res.status(400).json({ message: 'Please provide a target role' });
     }
 
-    // TODO: Parse PDF/DOCX file from req.file.buffer
-    // For now, we will mock the text extraction. Next step will add parsing!
-    const extractedText = "Dummy resume text (will be replaced with actual parser)";
+    let extractedText = '';
+
+    if (req.file.mimetype === 'application/pdf') {
+      const pdfParse = require('pdf-parse');
+      const data = await pdfParse(req.file.buffer);
+      extractedText = data.text;
+    } else {
+      // For plain text files as fallback
+      extractedText = req.file.buffer.toString('utf-8');
+    }
+
+    if (!extractedText || extractedText.trim().length === 0) {
+      return res.status(400).json({ message: 'Could not extract text from the uploaded file.' });
+    }
 
     // Call OpenAI to analyze the resume
     const prompt = `Act as an expert technical recruiter. Analyze this resume text for the target role of "${targetRole}". Provide feedback on strengths, weaknesses, and a roadmap to improve. Resume Text: ${extractedText}`;
