@@ -5,6 +5,7 @@ import { Briefcase, Activity, Target, FileText, ArrowLeft } from 'lucide-react';
 import RoadmapGenerator from '../components/RoadmapGenerator';
 import RoadmapDisplay from '../components/RoadmapDisplay';
 import UploadScreen from '../components/UploadScreen';
+import MetricsDashboard from '../components/MetricsDashboard';
 
 const Dashboard = () => {
   const { user } = useContext(AuthContext);
@@ -37,6 +38,11 @@ const Dashboard = () => {
       <div className="mb-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
         <h1 className="text-4xl font-bold mb-2">Welcome back, <span className="text-gradient">{user?.name}</span></h1>
         <p className="text-secondary text-lg">Let's continue building your tech career roadmap.</p>
+      </div>
+
+      {/* Analytics Overview */}
+      <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100">
+        <MetricsDashboard />
       </div>
 
       {/* Tabs */}
