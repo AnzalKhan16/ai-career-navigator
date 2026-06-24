@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
-import { UploadCloud, File, X, ChevronRight } from 'lucide-react';
+import { UploadCloud, File, X, ChevronRight, Loader2 } from 'lucide-react';
+import API from '../api/axios';
 
 export default function UploadScreen({ onComplete }) {
   const [isDragging, setIsDragging] = useState(false);
   const [file, setFile] = useState(null);
-  const [targetRole, setTargetRole] = useState('data-scientist');
+  const [targetRole, setTargetRole] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleDragOver = (e) => {
     e.preventDefault();
@@ -30,20 +33,53 @@ export default function UploadScreen({ onComplete }) {
     }
   };
 
+  const handleAnalyze = async () => {
+    if (!file || !targetRole) {
+      setError('Please provide both a resume and a target role.');
+      return;
+    }
+    
+    setLoading(true);
+    setError('');
+
+    const formData = new FormData();
+    formData.append('resume', file);
+    formData.append('targetRole', targetRole);
+
+    try {
+      const res = await API.post('/resumes/analyze', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      onComplete(res.data.analysis);
+    } catch (err) {
+      console.error(err);
+      setError(err.response?.data?.message || 'Failed to analyze resume via AI.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className="max-w-3xl mx-auto w-full py-12 px-4 sm:px-6">
-      <div className="text-center mb-10">
-        <h2 className="text-3xl font-bold tracking-tight text-primary sm:text-4xl">Upload Your Resume</h2>
-        <p className="mt-4 text-lg leading-6 text-secondary">
-          Let's analyze your skills and build a personalized roadmap for your dream AI role.
+    <div className="w-full text-left animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="mb-8">
+        <h2 className="text-3xl font-bold mb-2">Resume <span className="text-gradient">Analysis</span></h2>
+        <p className="text-secondary text-lg">
+          Upload your resume and let our AI compare your skills against your dream role.
         </p>
       </div>
 
-      <div className="bg-surface rounded-2xl shadow-sm border border-border p-6 sm:p-10 transition-all">
+      <div className="glass-card p-8 rounded-2xl border border-white/10">
+        
+        {error && (
+          <div className="bg-red-500/10 border border-red-500/50 text-red-500 px-4 py-3 rounded-lg mb-6 text-sm">
+            {error}
+          </div>
+        )}
+
         {/* Upload Zone */}
         <div 
-          className={`relative border-2 border-dashed rounded-xl p-12 flex flex-col items-center justify-center transition-colors ${
-            isDragging ? 'border-accent bg-accent/5' : 'border-border hover:border-secondary/50'
+          className={`relative border-2 border-dashed rounded-xl p-12 flex flex-col items-center justify-center transition-all ${
+            isDragging ? 'border-accent-blue bg-accent-blue/10' : 'border-white/20 hover:border-white/40 bg-white/5'
           }`}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
@@ -54,11 +90,12 @@ export default function UploadScreen({ onComplete }) {
             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" 
             onChange={handleFileInput}
             accept=".pdf,.doc,.docx"
+            disabled={loading}
           />
           
           {file ? (
             <div className="flex flex-col items-center space-y-4">
-              <div className="w-16 h-16 bg-blue-50 text-accent rounded-full flex items-center justify-center">
+              <div className="w-16 h-16 bg-accent-blue/20 text-accent-blue rounded-full flex items-center justify-center shadow-[0_0_15px_rgba(59,130,246,0.5)]">
                 <File size={32} />
               </div>
               <div className="text-center">
@@ -67,21 +104,22 @@ export default function UploadScreen({ onComplete }) {
               </div>
               <button 
                 onClick={(e) => { e.preventDefault(); setFile(null); }}
-                className="mt-4 flex items-center text-sm font-medium text-red-500 hover:text-red-700 transition-colors z-10"
+                className="mt-4 flex items-center text-sm font-medium text-red-400 hover:text-red-300 transition-colors z-10"
+                disabled={loading}
               >
                 <X size={16} className="mr-1" /> Remove File
               </button>
             </div>
           ) : (
             <div className="flex flex-col items-center space-y-4">
-              <div className={`w-16 h-16 rounded-full flex items-center justify-center transition-colors ${isDragging ? 'bg-accent/10 text-accent' : 'bg-gray-50 text-secondary'}`}>
+              <div className={`w-16 h-16 rounded-full flex items-center justify-center transition-colors ${isDragging ? 'bg-accent-blue/20 text-accent-blue' : 'bg-white/10 text-secondary'}`}>
                 <UploadCloud size={32} />
               </div>
               <div className="text-center">
                 <p className="text-lg font-medium text-primary">
-                  <span className="text-accent cursor-pointer">Click to upload</span> or drag and drop
+                  <span className="text-accent-blue cursor-pointer font-semibold">Click to upload</span> or drag and drop
                 </p>
-                <p className="text-sm text-secondary mt-1">PDF, DOC, or DOCX (MAX. 5MB)</p>
+                <p className="text-sm text-secondary mt-2">PDF, DOC, or DOCX (MAX. 5MB)</p>
               </div>
             </div>
           )}
@@ -89,34 +127,38 @@ export default function UploadScreen({ onComplete }) {
 
         {/* Target Role Selection */}
         <div className="mt-8">
-          <label htmlFor="role" className="block text-sm font-medium text-primary mb-2">
-            Target AI Role
+          <label htmlFor="role" className="block text-sm font-medium text-secondary mb-2">
+            Target Role for Analysis
           </label>
-          <select
+          <input
             id="role"
+            type="text"
             value={targetRole}
             onChange={(e) => setTargetRole(e.target.value)}
-            className="block w-full pl-3 pr-10 py-3 text-base border-border focus:outline-none focus:ring-accent focus:border-accent sm:text-sm rounded-lg border bg-gray-50 transition-colors cursor-pointer"
-          >
-            <option value="data-scientist">Data Scientist</option>
-            <option value="ml-engineer">Machine Learning Engineer</option>
-            <option value="ai-product-manager">AI Product Manager</option>
-            <option value="data-engineer">Data Engineer</option>
-            <option value="research-scientist">AI Research Scientist</option>
-          </select>
+            disabled={loading}
+            className="w-full bg-white/5 border border-border rounded-lg py-3 px-4 text-primary focus:outline-none focus:border-accent-blue focus:ring-1 focus:ring-accent-blue transition-colors"
+            placeholder="e.g. Senior Machine Learning Engineer"
+          />
         </div>
 
         {/* Action Button */}
-        <div className="mt-10">
+        <div className="mt-8">
           <button
-            disabled={!file}
-            onClick={() => onComplete(targetRole)}
-            className={`w-full flex justify-center items-center py-4 px-4 border border-transparent rounded-xl shadow-sm text-lg font-medium text-white transition-all ${
-              file ? 'bg-accent hover:bg-blue-600 focus:ring-2 focus:ring-offset-2 focus:ring-accent' : 'bg-gray-300 cursor-not-allowed'
-            }`}
+            disabled={!file || !targetRole || loading}
+            onClick={handleAnalyze}
+            className="w-full bg-gradient-to-r from-accent-blue to-accent-purple text-white font-semibold py-3 px-4 rounded-lg hover:shadow-lg hover:shadow-accent-glow/40 transition-all flex justify-center items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed hover-lift"
           >
-            Generate Roadmap
-            <ChevronRight className="ml-2" size={20} />
+            {loading ? (
+              <>
+                <Loader2 className="w-5 h-5 animate-spin" />
+                Analyzing Resume...
+              </>
+            ) : (
+              <>
+                Analyze Resume via AI
+                <ChevronRight className="w-5 h-5" />
+              </>
+            )}
           </button>
         </div>
       </div>
