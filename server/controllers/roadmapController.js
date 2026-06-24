@@ -44,8 +44,17 @@ const createRoadmap = async (req, res) => {
 
     res.status(201).json(roadmap);
   } catch (error) {
-    console.error('Roadmap Generation Error:', error.message);
-    res.status(500).json({ message: 'Failed to generate roadmap' });
+    // DIAGNOSTIC UPDATE: Print the exact error object and any API response payload
+    console.error('====== ROADMAP GENERATION ERROR ======');
+    console.error('Error Message:', error.message);
+    if (error.response) {
+      console.error('OpenAI API Error Status:', error.response.status);
+      console.error('OpenAI API Error Data:', error.response.data);
+    } else {
+      console.error('Full Error Stack:', error);
+    }
+    console.error('======================================');
+    res.status(500).json({ message: 'Failed to generate roadmap', details: error.message });
   }
 };
 
