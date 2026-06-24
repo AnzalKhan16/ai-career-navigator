@@ -36,51 +36,54 @@ export default function CommunityFeed() {
   }, []);
 
   return (
-    <div className="bg-surface rounded-2xl shadow-sm border border-border p-6 w-full">
-      <div className="flex justify-between items-center mb-6">
+    <div className="glass-panel rounded-2xl p-6 w-full border border-white/10 relative overflow-hidden">
+      {/* Background glow */}
+      <div className="absolute -top-24 -right-24 w-48 h-48 bg-accent-blue/20 rounded-full blur-[80px] pointer-events-none"></div>
+
+      <div className="flex justify-between items-center mb-6 relative z-10">
         <h3 className="text-lg font-bold text-primary flex items-center">
-          <Users className="mr-2 text-accent" />
-          Community Pulse
+          <Users className="mr-2 text-accent-blue w-5 h-5" />
+          Community <span className="text-gradient ml-1">Pulse</span>
         </h3>
-        <button onClick={fetchActivities} className="text-secondary hover:text-primary transition-colors p-1">
-          <RefreshCw size={16} className={loading ? "animate-spin" : ""} />
+        <button onClick={fetchActivities} className="text-secondary hover:text-white transition-colors p-1">
+          <RefreshCw size={16} className={loading ? "animate-spin text-accent-blue" : ""} />
         </button>
       </div>
 
-      <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
+      <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar relative z-10">
         {loading ? (
-          // Skeleton Loader
+          // Skeleton Loader (Dark Mode V2)
           Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="animate-pulse flex space-x-4">
-              <div className="rounded-full bg-gray-200 h-10 w-10"></div>
+            <div key={i} className="animate-pulse flex space-x-4 mb-4">
+              <div className="rounded-full bg-white/10 h-10 w-10"></div>
               <div className="flex-1 space-y-4 py-1">
-                <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                <div className="h-4 bg-white/10 rounded w-3/4"></div>
                 <div className="space-y-2">
-                  <div className="h-3 bg-gray-200 rounded w-5/6"></div>
+                  <div className="h-3 bg-white/5 rounded w-5/6"></div>
                 </div>
               </div>
             </div>
           ))
         ) : (
           activities.map((item) => (
-            <div key={item.id} className="border-b border-border last:border-0 pb-4 last:pb-0">
+            <div key={item.id} className="border-b border-white/10 last:border-0 pb-4 last:pb-0 hover-lift group">
               <div className="flex items-start space-x-3">
-                <div className="flex-shrink-0">
-                  <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-100 to-accent/20 flex items-center justify-center border border-blue-200">
-                    <span className="text-sm font-bold text-accent">{item.user.charAt(0)}</span>
+                <div className="flex-shrink-0 mt-1">
+                  <div className="h-10 w-10 rounded-full bg-gradient-to-br from-accent-blue/20 to-accent-purple/20 flex items-center justify-center border border-white/10 shadow-inner group-hover:border-accent-blue/50 transition-colors">
+                    <span className="text-sm font-bold text-accent-blue">{item.user.charAt(0)}</span>
                   </div>
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm text-primary">
-                    <span className="font-semibold">{item.user}</span> <span className="text-secondary">{item.action}</span> <span className="font-medium text-accent">{item.target}</span>
+                    <span className="font-semibold text-white">{item.user}</span> <span className="text-secondary">{item.action}</span> <span className="font-medium text-accent-blue">{item.target}</span>
                   </p>
-                  <p className="text-xs text-secondary mt-0.5">{item.role} • {item.time}</p>
+                  <p className="text-xs text-secondary/70 mt-0.5">{item.role} • {item.time}</p>
                   
                   <div className="mt-2 flex space-x-4 text-xs font-medium text-secondary">
-                    <button className="flex items-center hover:text-accent transition-colors">
+                    <button className="flex items-center hover:text-red-400 transition-colors">
                       <Heart size={14} className="mr-1" /> {item.likes}
                     </button>
-                    <button className="flex items-center hover:text-accent transition-colors">
+                    <button className="flex items-center hover:text-accent-blue transition-colors">
                       <MessageSquare size={14} className="mr-1" /> {item.comments}
                     </button>
                   </div>
