@@ -2,15 +2,15 @@ import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import API from '../api/axios';
 import { Briefcase, Activity, Target } from 'lucide-react';
-// We will create these two components next!
-// import RoadmapGenerator from '../components/RoadmapGenerator';
-// import RoadmapDisplay from '../components/RoadmapDisplay';
+import RoadmapGenerator from '../components/RoadmapGenerator';
+import RoadmapDisplay from '../components/RoadmapDisplay';
 
 const Dashboard = () => {
   const { user } = useContext(AuthContext);
   const [activities, setActivities] = useState([]);
   const [roadmaps, setRoadmaps] = useState([]);
   const [activeTab, setActiveTab] = useState('generator'); // 'generator' or 'history'
+  const [selectedRoadmap, setSelectedRoadmap] = useState(null);
 
   useEffect(() => {
     fetchUserData();
@@ -40,7 +40,7 @@ const Dashboard = () => {
       {/* Tabs */}
       <div className="flex gap-4 mb-8">
         <button 
-          onClick={() => setActiveTab('generator')}
+          onClick={() => { setActiveTab('generator'); setSelectedRoadmap(null); }}
           className={`px-6 py-3 rounded-lg font-medium transition-all flex items-center gap-2 ${
             activeTab === 'generator' 
               ? 'bg-white/10 text-white shadow-lg border border-white/20' 
@@ -51,7 +51,7 @@ const Dashboard = () => {
           Generate New
         </button>
         <button 
-          onClick={() => setActiveTab('history')}
+          onClick={() => { setActiveTab('history'); setSelectedRoadmap(null); }}
           className={`px-6 py-3 rounded-lg font-medium transition-all flex items-center gap-2 ${
             activeTab === 'history' 
               ? 'bg-white/10 text-white shadow-lg border border-white/20' 
@@ -67,22 +67,35 @@ const Dashboard = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
           {activeTab === 'generator' ? (
-            <div className="glass-card p-8 rounded-2xl border-dashed border-2 border-white/10 text-center">
-               <h3 className="text-2xl font-semibold mb-4">Roadmap Generator</h3>
-               <p className="text-secondary mb-6">Component coming in the next step!</p>
-               {/* <RoadmapGenerator onGenerateSuccess={fetchUserData} /> */}
+            <div className="glass-card p-8 rounded-2xl border border-white/10">
+               <RoadmapGenerator onGenerateSuccess={() => {
+                 fetchUserData();
+                 setActiveTab('history');
+               }} />
             </div>
           ) : (
             <div className="space-y-6">
-              {roadmaps.length === 0 ? (
+              {selectedRoadmap ? (
+                <RoadmapDisplay 
+                  roadmap={selectedRoadmap} 
+                  onBack={() => setSelectedRoadmap(null)} 
+                />
+              ) : roadmaps.length === 0 ? (
                 <div className="glass-card p-8 rounded-2xl text-center text-secondary">
                   No roadmaps generated yet. Go create one!
                 </div>
               ) : (
                 roadmaps.map((rm) => (
-                  <div key={rm._id} className="glass-card p-6 rounded-2xl hover-lift cursor-pointer">
-                    <h3 className="text-xl font-bold mb-2 capitalize">{rm.currentRole} ➔ {rm.targetRole}</h3>
-                    <p className="text-sm text-secondary">Generated on {new Date(rm.createdAt).toLocaleDateString()}</p>
+                  <div 
+                    key={rm._id} 
+                    onClick={() => setSelectedRoadmap(rm)}
+                    className="glass-card p-6 rounded-2xl hover-lift cursor-pointer flex justify-between items-center"
+                  >
+                    <div>
+                      <h3 className="text-xl font-bold mb-2 capitalize">{rm.currentRole} ➔ {rm.targetRole}</h3>
+                      <p className="text-sm text-secondary">Generated on {new Date(rm.createdAt).toLocaleDateString()}</p>
+                    </div>
+                    <Target className="w-6 h-6 text-accent-blue/50" />
                   </div>
                 ))
               )}
