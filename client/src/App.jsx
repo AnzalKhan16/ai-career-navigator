@@ -4,16 +4,14 @@ import { AuthProvider, AuthContext } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import Dashboard from './pages/Dashboard';
 
-// --- Placeholder Components for Phase 4 ---
 const Home = () => (
   <div className="flex flex-col items-center justify-center text-center mt-20">
     <h1 className="text-5xl font-bold mb-6">Welcome to AI Career <span className="text-gradient">Navigator</span></h1>
     <p className="text-xl text-secondary max-w-2xl">Your personal AI-powered guide to transitioning into your dream tech role. Sign up to get started.</p>
   </div>
 );
-
-const Dashboard = () => <div className="text-center mt-20 text-2xl font-semibold">Protected Dashboard (Coming in Phase 4)</div>;
 
 // --- Protected Route Wrapper ---
 const ProtectedRoute = ({ children }) => {
