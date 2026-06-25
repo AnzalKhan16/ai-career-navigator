@@ -33,3 +33,63 @@
     
 *   **👥 Dynamic Community Pulse Event Feed**
     Don't build your career in a silo! A live, MongoDB-backed event feed broadcasts community milestones in real-time—see when peers generate new roadmaps or complete resume analyses.
+
+---
+
+## 🛠️ Tech Stack
+
+**Frontend (Client)**
+*   **React (Vite)**: Lightning-fast rendering and component state management.
+*   **TailwindCSS**: Utility-first CSS for our dark-mode glassmorphism V2 UI.
+*   **Lucide React**: Crisp, modern iconography.
+*   **Axios**: Promise-based HTTP client for seamless backend communication.
+
+**Backend (Server)**
+*   **Node.js & Express.js**: High-performance, unopinionated routing and controller logic.
+*   **MongoDB & Mongoose**: Flexible NoSQL database and elegant object modeling for users, roadmaps, and feed events.
+*   **OpenAI API (gpt-4o-mini)**: The "brain" behind the roadmap generation and resume analysis.
+*   **JWT & bcryptjs**: Stateless, encrypted user authentication.
+*   **multer & pdf-parse**: In-memory file uploading and robust PDF text extraction.
+
+---
+
+## 💻 Installation & Local Development
+
+Want to run AI Career Navigator locally? Follow these steps:
+
+### 1. Prerequisites
+*   [Node.js](https://nodejs.org/en/) (v16+)
+*   [MongoDB](https://www.mongodb.com/) (Local installation or Atlas URI)
+*   [OpenAI API Key](https://platform.openai.com/api-keys)
+
+### 2. Clone the Repository
+```bash
+git clone https://github.com/YourUsername/ai-career-navigator.git
+cd ai-career-navigator
+```
+
+### 3. Backend Setup
+```bash
+cd server
+npm install
+```
+Create a `.env` file in the `/server` directory:
+```env
+PORT=5000
+MONGODB_URI=mongodb://localhost:27017/ai_career_navigator
+JWT_SECRET=your_super_secret_jwt_key
+OPENAI_API_KEY=sk-your-actual-openai-api-key
+```
+Start the server:
+```bash
+npm run dev
+```
+
+### 4. Frontend Setup
+Open a new terminal window:
+```bash
+cd client
+npm install
+npm run dev
+```
+The client will usually run on `http://localhost:5173`. Open it in your browser and start navigating your career!
