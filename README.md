@@ -124,5 +124,5 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 ---
 <div align="center">
-  <p>Built with ❤️ by Anzal Khan and the Open Source Community</p>
+  <p>Built by Anzal Khan </p>
 </div>
