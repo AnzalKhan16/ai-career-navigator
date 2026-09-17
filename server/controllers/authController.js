@@ -34,6 +34,31 @@ const registerUser = async (req, res) => {
     });
 
     if (user) {
+      // Sync to Supabase Database
+      const supabase = require('../config/supabaseClient');
+      if (supabase) {
+        try {
+          const { error } = await supabase
+            .from('users')
+            .insert([
+              { 
+                id: user._id.toString(), 
+                name: user.name, 
+                email: user.email, 
+                created_at: user.createdAt 
+              }
+            ]);
+            
+          if (error) {
+            console.error('Supabase Sync Error:', error.message);
+          } else {
+            console.log('User synced to Supabase successfully.');
+          }
+        } catch (supaErr) {
+          console.error('Supabase integration failed:', supaErr.message);
+        }
+      }
+
       res.status(201).json({
         _id: user._id,
         name: user.name,

@@ -32,13 +32,32 @@ app.get('/', (req, res) => {
 });
 
 // MongoDB Connection & Server Start
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/ai_career_navigator')
-  .then(() => {
+const connectDB = async () => {
+  const uri = process.env.MONGODB_URI || 'mongodb://localhost:27017/ai_career_navigator';
+  try {
+    // Try connecting to provided DB with a short timeout
+    await mongoose.connect(uri, { serverSelectionTimeoutMS: 2000 });
     console.log('Connected to MongoDB');
-    app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
-    });
-  })
-  .catch((err) => {
-    console.error('Failed to connect to MongoDB', err);
+    startServer();
+  } catch (err) {
+    console.log('Local/Remote MongoDB not found. Starting In-Memory MongoDB for instant development...');
+    try {
+      const { MongoMemoryServer } = require('mongodb-memory-server');
+      const mongoServer = await MongoMemoryServer.create();
+      const inMemoryUri = mongoServer.getUri();
+      await mongoose.connect(inMemoryUri);
+      console.log('Connected to In-Memory MongoDB');
+      startServer();
+    } catch (memoryErr) {
+      console.error('Failed to start In-Memory MongoDB', memoryErr);
+    }
+  }
+};
+
+const startServer = () => {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
   });
+};
+
+connectDB();
